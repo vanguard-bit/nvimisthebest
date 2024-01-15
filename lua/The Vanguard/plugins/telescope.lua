@@ -27,6 +27,13 @@ return{
                     },
                 },
                 pickers =  {
+                  buffers = {
+      mappings = {
+        i = {
+          ["<C-d>"] = actions.delete_buffer,
+        }
+      }
+    },
                     find_files = {
                         mappings = {
                             n = {
@@ -40,7 +47,7 @@ return{
                             }
                         }
                     },
-                }, 
+                },
             }
         end,
     }
