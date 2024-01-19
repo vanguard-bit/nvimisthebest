@@ -39,7 +39,7 @@ vim.opt.smartcase = true
 --vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 
 vim.opt.cursorline = true
-vim.opt.showmode = false
+-- vim.opt.showmode = false
 vim.opt.timeoutlen = 300
 vim.opt.wildmode = "longest:full,full" -- Command-line completion mode
 vim.opt.fillchars = {
@@ -93,3 +93,9 @@ vim.opt.fillchars = {
 --vim.api.nvim_set_hl(0, "CmpItemKindInterface", { fg = "#D8EEEB", bg = "#58B5A8" })
 --vim.api.nvim_set_hl(0, "CmpItemKindColor", { fg = "#D8EEEB", bg = "#58B5A8" })
 --vim.api.nvim_set_hl(0, "CmpItemKindTypeParameter", { fg = "#D8EEEB", bg = "#58B5A8" })
+
+--netrw options
+
+vim.g.netrw_browse_split = 0
+vim.g.netrw_banner = 0
+vim.g.netrw_winsize =10000

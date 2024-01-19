@@ -46,6 +46,7 @@ cmp.setup({
       -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
     end,
   },
+
   window = {
 --  completion = {
     completion = cmp.config.window.bordered(),
@@ -95,8 +96,9 @@ require("neodev").setup({
     local keymap = vim.keymap -- for conciseness
 
     local opts = { noremap = true, silent = true }
-    local on_attach = function(client, bufnr)
+    local on_attach = function(cilent,bufnr)
       opts.buffer = bufnr
+
 
       -- set keybinds
      opts.desc = "Show LSP references"
@@ -148,6 +150,7 @@ require('lspconfig')['clangd'].setup {
 require('lspconfig')['rust_analyzer'].setup({
   capabilities = capabilities,
       on_attach=on_attach,
+      single_file_support = true,
     settings = {
         ["rust-analyzer"] = {
             imports = {
