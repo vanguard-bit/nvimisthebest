@@ -1,27 +1,5 @@
--- Tabby
--- https://github.com/UserEast/nightfox.nvim/tree/main/mics/tabby.lua
---
--- This file is a complete example of creating the tabby configuration shown in the readme of
--- nightfox. This configuration generates its own highlight groups from the currently applied
--- colorscheme. These highlight groups are regenreated on colorscheme changes.
---
--- Required plugins:
---    - `nanozuki/tabby.nvim`
---
--- This file is required to be in your `lua` folder of your config.  Your colorscheme should also
--- be applied before this file is sourced. This file cannot be located `lua/tabby.lua` as this
--- would clash with the actual plugin require path.
---
---
--- # Example:
---
--- ```lua
-vim.cmd("colorscheme carbonfox")
-require('The Vanguard.plugins.tabline')
--- ```
---
--- This assumes that this file is located at `lua/user/ui/tabby.lua`
-
+-- vim.cmd("colorscheme nightfox")
+-- require('fel')
 local fmt = string.format
 
 ----------------------------------------------------------------------------------------------------
@@ -92,16 +70,26 @@ local function generate_pallet_from_colorscheme()
     white   = { index = 7, default = "#dfdfe0" },
   }
 
+  local diagnostic_map = {
+    hint = { hl = "DiagnosticHint", default = color_map.green.default },
+    info = { hl = "DiagnosticInfo", default = color_map.blue.default },
+    warn = { hl = "DiagnosticWarn", default = color_map.yellow.default },
+    error = { hl = "DiagnosticError", default = color_map.red.default },
+    ok = { hl = "DiagnosticOk", default = color_map.green.default },
+  }
+
   local pallet = {}
   for name, value in pairs(color_map) do
     local global_name = "terminal_color_" .. value.index
     pallet[name] = vim.g[global_name] and vim.g[global_name] or value.default
   end
 
+  for name, value in pairs(diagnostic_map) do
+    pallet[name] = get_highlight(value.hl).fg or value.default
+  end
+
   pallet.sl = get_highlight("StatusLine")
-  pallet.tab = get_highlight("TabLine")
   pallet.sel = get_highlight("TabLineSel")
-  pallet.fill = get_highlight("TabLineFill")
 
   return pallet
 end
@@ -110,7 +98,7 @@ end
 ---
 ---NOTE: This is a global because I dont known where this file will be in your config
 ---and it is needed for the autocmd below
-_G._genreate_user_tabline_highlights = function()
+_G._generate_user_statusline_highlights = function()
   local pal = generate_pallet_from_colorscheme()
 
   -- stylua: ignore
@@ -131,90 +119,37 @@ _G._genreate_user_tabline_highlights = function()
     colors["UserRv" .. name] = { fg = value.bg, bg = value.fg, bold = true }
   end
 
+  local status = vim.o.background == "dark" and { fg = pal.black, bg = pal.white } or { fg = pal.white, bg = pal.black }
+
   local groups = {
-    -- tabline
-    UserTLHead = { fg = pal.fill.bg, bg = pal.cyan },
-    UserTLHeadSep = { fg = pal.cyan, bg = pal.fill.bg },
-    UserTLActive = { fg = pal.sel.fg, bg = pal.sel.bg, bold = true },
-    UserTLActiveSep = { fg = pal.sel.bg, bg = pal.fill.bg },
-    UserTLBoldLine = { fg = pal.tab.fg, bg = pal.tab.bg, bold = true },
-    UserTLLineSep = { fg = pal.tab.bg, bg = pal.fill.bg },
+    -- statusline
+    UserSLHint = { fg = pal.sl.bg, bg = pal.hint, bold = true },
+    UserSLInfo = { fg = pal.sl.bg, bg = pal.info, bold = true },
+    UserSLWarn = { fg = pal.sl.bg, bg = pal.warn, bold = true },
+    UserSLError = { fg = pal.sl.bg, bg = pal.error, bold = true },
+    UserSLStatus = { fg = status.fg, bg = status.bg, bold = true },
+
+    UserSLFtHint = { fg = pal.sel.bg, bg = pal.hint },
+    UserSLHintInfo = { fg = pal.hint, bg = pal.info },
+    UserSLInfoWarn = { fg = pal.info, bg = pal.warn },
+    UserSLWarnError = { fg = pal.warn, bg = pal.error },
+    UserSLErrorStatus = { fg = pal.error, bg = status.bg },
+    UserSLStatusBg = { fg = status.bg, bg = pal.sl.bg },
+
+    UserSLAlt = pal.sel,
+    UserSLAltSep = { fg = pal.sl.bg, bg = pal.sel.bg },
+    UserSLGitBranch = { fg = pal.yellow, bg = pal.sl.bg },
   }
 
   set_highlights(vim.tbl_extend("force", colors, groups))
 end
 
-_genreate_user_tabline_highlights()
+_generate_user_statusline_highlights()
 
-vim.api.nvim_create_augroup("UserTablineHighlightGroups", { clear = true })
+vim.api.nvim_create_augroup("UserStatuslineHighlightGroups", { clear = true })
 vim.api.nvim_create_autocmd({ "SessionLoadPost", "ColorScheme" }, {
   callback = function()
-    _genreate_user_tabline_highlights()
+    _generate_user_statusline_highlights()
   end,
 })
 
-----------------------------------------------------------------------------------------------------
--- Feline
-
-local filename = require("tabby.filename")
-
-local cwd = function()
-  return "  " .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t") .. " "
-end
-
-local line = {
-  hl = "TabLineFill",
-  layout = "active_wins_at_tail",
-  head = {
-    { cwd, hl = "UserTLHead" },
-    { "", hl = "UserTLHeadSep" },
-  },
-  active_tab = {
-    label = function(tabid)
-      return {
-        "  " .. tabid .. " ",
-        hl = "UserTLActive",
-      }
-    end,
-    left_sep = { "", hl = "UserTLActiveSep" },
-    right_sep = { "", hl = "UserTLActiveSep" },
-  },
-  inactive_tab = {
-    label = function(tabid)
-      return {
-        "  " .. tabid .. " ",
-        hl = "UserTLBoldLine",
-      }
-    end,
-    left_sep = { "", hl = "UserTLLineSep" },
-    right_sep = { "", hl = "UserTLLineSep" },
-  },
-  top_win = {
-    label = function(winid)
-      return {
-        "  " .. filename.unique(winid) .. " ",
-        hl = "TabLine",
-      }
-    end,
-    left_sep = { "", hl = "UserTLLineSep" },
-    right_sep = { "", hl = "UserTLLineSep" },
-  },
-  win = {
-    label = function(winid)
-      return {
-        "  " .. filename.unique(winid) .. " ",
-        hl = "TabLine",
-      }
-    end,
-    left_sep = { "", hl = "UserTLLineSep" },
-    right_sep = { "", hl = "UserTLLineSep" },
-  },
-  tail = {
-    { "", hl = "UserTLHeadSep" },
-    { "  ", hl = "UserTLHead" },
-  },
-}
-
-require("tabby").setup({
-  tabline = line,
-})

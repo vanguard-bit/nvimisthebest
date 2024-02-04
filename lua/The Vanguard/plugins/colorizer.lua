@@ -1,3 +1,7 @@
 return{
-  'norcalli/nvim-colorizer.lua'
+  'norcalli/nvim-colorizer.lua',
+  -- keys={
+--    "<leader>co",
+-- "require'colorizer'.setup()"
+--   }
 }

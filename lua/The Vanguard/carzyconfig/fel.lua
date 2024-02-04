@@ -1,5 +1,41 @@
+
+--typos_lsp ignore
+-- -- progress data
+-- local clients = {}
+-- local progress = { '⠋', '⠙', '⠸', '⢰', '⣠', '⣄', '⡆', '⠇' }
+--
+-- -- check for lsp progress data
+-- local function is_lsp_loading(client) return client and clients[client] and clients[client].percentage < 100 end
+--
+-- -- update lsp progress
+-- local function update_lsp_progress()
+-- 	local messages = vim.lsp.util.get_progress_messages()
+-- 	for _, message in ipairs(messages) do
+-- 		if not message.name then goto continue end
+--
+-- 		local client_name = message.name
+--
+-- 		if not clients[client_name] then clients[client_name] = { percentage = 0, progress_index = 0 } end
+--
+-- 		if message.done then
+-- 			clients[client_name].percentage = 100
+-- 		else
+-- 			if message.percentage then clients[client_name].percentage = message.percentage end
+-- 		end
+--
+-- 		if clients[client_name].percentage % 5 == 0 or clients[client_name].progress_index == 0 then
+-- 			vim.opt.statusline = vim.opt.statusline
+-- 			clients[client_name].progress_index = clients[client_name].progress_index + 1
+-- 		end
+--
+-- 		if clients[client_name].progress_index > #progress then clients[client_name].progress_index = 1 end
+--
+-- 		::continue::
+-- 	end
+-- end
+--
+-- get lsp client name for buffer
 local function get_lsp_client_name()
-  --alacrity diffrent hl group
 	local active_clients = vim.lsp.get_active_clients({ bufnr = 0 })
 	local client_name
 
@@ -121,7 +157,7 @@ _G._generate_user_statusline_highlights = function()
     colors["UserRv" .. name] = { fg = value.bg, bg = value.fg, bold = true }
   end
 
-  local status = vim.o.background == "dark" and { fg = "none", bg = "none" } or { fg = "none", bg = "none", }
+  local status = vim.o.background == "dark" and { fg = pal.black, bg = pal.white } or { fg = pal.white, bg = pal.black }
 
   local groups = {
     -- statusline
@@ -142,7 +178,6 @@ _G._generate_user_statusline_highlights = function()
     UserSLAlt = pal.sel,
     UserSLAltSep = { fg = pal.sl.bg, bg = pal.sel.bg },
     UserSLGitBranch = { fg = pal.yellow, bg = pal.sl.bg },
-    UserSLGitBranchSep = { fg = pal.sl.bg, bg = pal.sl.bg },
   }
 
   set_highlights(vim.tbl_extend("force", colors, groups))
@@ -157,15 +192,36 @@ vim.api.nvim_create_autocmd({ "SessionLoadPost", "ColorScheme" }, {
   end,
 })
 
+
 -- configure feline
 local function config(_, opts)
 vim.cmd("colorscheme nightfox")
 require('The Vanguard.plugins.fel')
 	local colorscheme = vim.g.colors_name
 	local palette = require('nightfox.palette').load(colorscheme)
+    -- local colors = require("The Vanguard.utils.colors")
 	local feline = require('feline')
+	local vi_mode = require('feline.providers.vi_mode')
 	local file = require('feline.providers.file')
 	local separators = require('feline.defaults').statusline.separators.default_value
+	-- local lsp = require('feline.providers.lsp')
+
+	-- local theme = {
+	-- 	fg = palette.fg1,
+	-- 	bg = palette.bg1,
+	-- 	black = palette.black.base,
+	-- 	skyblue = palette.blue.bright,
+	-- 	cyan = palette.cyan.base,
+	-- 	green = palette.green.base,
+	-- 	oceanblue = palette.blue.base,
+	-- 	magenta = palette.magenta.base,
+	-- 	orange = palette.orange.base,
+	-- 	red = palette.red.base,
+	-- 	violet = palette.magenta.bright,
+	-- 	white = palette.white.base,
+	-- 	yellow = palette.yellow.base,
+	-- }
+    -- Feline
 
 local vi = {
   -- Map vi mode to text name
@@ -228,36 +284,36 @@ local vi = {
   },
 }
 
--- local icons = {
---   locker = "", -- #f023
---   page = "☰", -- 2630
---   line_number = "", -- e0a1
---   connected = "", -- f817
---   dos = "", -- e70f
---   unix = "", -- f17c
---   mac = "", -- f179
---   mathematical_L = "𝑳",
---   vertical_bar = "┃",
---   vertical_bar_thin = "│",
---   left = "",
---   right = "",
---   block = "█",
---   left_filled = "",
---   right_filled = "",
---   slant_left = "",
---   slant_left_thin = "",
---   slant_right = "",
---   slant_right_thin = "",
---   slant_left_2 = "",
---   slant_left_2_thin = "",
---   slant_right_2 = "",
---   slant_right_2_thin = "",
---   left_rounded = "",
---   left_rounded_thin = "",
---   right_rounded = "",
---   right_rounded_thin = "",
---   circle = "●",
--- }
+local icons = {
+  locker = "", -- #f023
+  page = "☰", -- 2630
+  line_number = "", -- e0a1
+  connected = "", -- f817
+  dos = "", -- e70f
+  unix = "", -- f17c
+  mac = "", -- f179
+  mathematical_L = "𝑳",
+  vertical_bar = "┃",
+  vertical_bar_thin = "│",
+  left = "",
+  right = "",
+  block = "█",
+  left_filled = "",
+  right_filled = "",
+  slant_left = "",
+  slant_left_thin = "",
+  slant_right = "",
+  slant_right_thin = "",
+  slant_left_2 = "",
+  slant_left_2_thin = "",
+  slant_right_2 = "",
+  slant_right_2_thin = "",
+  left_rounded = "",
+  left_rounded_thin = "",
+  right_rounded = "",
+  right_rounded_thin = "",
+  circle = "●",
+}
 
 ---Get the number of diagnostic messages for the provided severity
 ---@param str string [ERROR | WARN | INFO | HINT]
@@ -297,52 +353,55 @@ local function file_info()
   return table.concat(list, " ")
 end
 
-
 	local c = {
+
+		-- local function git_diff(type)
+		-- 	---@diagnostic disable-next-line: undefined-field
+		-- 	local gsd = vim.b.gitsigns_status_dict
+		-- 	if gsd and gsd[type] and gsd[type] > 0 then return tostring(gsd[type]) end
+		-- 	return nil
+		-- end
+
+		-- left
 		vim_status = {
 			provider = function()
 				local s
 				if require('lazy.status').has_updates() then
 					s = require('lazy.status').updates()
 				else
-					s = ' '
+					s = ''
 				end
 				s = string.format(' %s', s)
 				return s
 			end,
 			hl =vi_mode_hl ,
-            -- left_sep = {
-            --   -- always_visible = true,
-            --   str = "",
-            --   hl =vi_sep_hl,
-            -- },
+            --[[ left_sep = {
+              always_visible = true,
+              str = separators.,
+              hl ={ fg = palette.blue.base, bg ='none'},
+            }, ]]
 			right_sep = {
 				always_visible = true,
-				str =  "",
+				str =  "",
 				hl = vi_sep_hl,
 			},
 		},
 
-
-
-		file_e = {
-         provider=function()
-           local str = {}
-           str.str = ""
-           str.hl={fg="#FFFFFF"}
-           str="" .. str .. ""
-           return str
-end,
-         hl ="UserCyan",
+		file_name = {
+			provider = {
+				name = 'file_info',
+				opts = { colored_icon = true },
+			},
+			hl = "UserSLAlt",
 			left_sep = {
 				always_visible = true,
-				str = "",
-				hl = "UserCyan",
+				str = "",
+				hl = "UserSLAltSep",
 			},
             right_sep = {
 				always_visible = true,
-				str = "",
-				hl = "UserCyan",
+				str = "",
+				hl = "UserSLAltSep",
             }
 		},
 
@@ -359,17 +418,79 @@ end,
 				return s
 			end,
 			hl = "UserSLGitBranch",
-			-- left_sep = {
-			-- 	always_visible = true,
-			-- 	str = '',
-			-- 	hl = "UserSLGitBranch",
-			-- },
-			-- right_sep = {
-			-- 	always_visible = true,
-			-- 	str = '',
-			-- 	hl ="UserSLGitBranch",
-		 --  	},
+			left_sep = {
+				always_visible = true,
+				str = '█',
+				hl = "UserSLGitBranch",
+			},
+			right_sep = {
+				always_visible = true,
+				str = '',
+				hl ="UserSLGitBranch",
+		  	},
 		},
+
+		-- table.insert(components.active[left], {
+		-- 	provider = function()
+		-- 		local status = git_diff('added')
+		-- 		local s
+		-- 		if status then
+		-- 			s = string.format(' %s %s ', '', status)
+		-- 		else
+		-- 			s = ''
+		-- 		end
+		-- 		return s
+		-- 	end,
+		-- 	hl = { fg = palette.bg0, bg = palette.green.base },
+		-- 	left_sep = {
+		-- 		always_visible = true,
+		-- 		str = separators.slant_right,
+		-- 		hl = { fg = palette.bg0, bg = palette.green.base },
+		-- 	},
+		-- })
+
+		-- table.insert(components.active[left], {
+		-- 	provider = function()
+		-- 		local status = git_diff('changed')
+		-- 		local s
+		-- 		if status then
+		-- 			s = string.format(' %s %s ', '', status)
+		-- 		else
+		-- 			s = ''
+		-- 		end
+		-- 		return s
+		-- 	end,
+		-- 	hl = { fg = palette.bg0, bg = palette.yellow.base },
+		-- 	left_sep = {
+		-- 		always_visible = true,
+		-- 		str = separators.slant_right,
+		-- 		hl = { fg = palette.green.base, bg = palette.yellow.base },
+		-- 	},
+		-- })
+
+		-- table.insert(components.active[left], {
+		-- 	provider = function()
+		-- 		local status = git_diff('removed')
+		-- 		local s
+		-- 		if status then
+		-- 			s = string.format(' %s %s ', '', status)
+		-- 		else
+		-- 			s = ''
+		-- 		end
+		-- 		return s
+		-- 	end,
+		-- 	hl = { fg = palette.bg0, bg = palette.red.base },
+		-- 	left_sep = {
+		-- 		always_visible = true,
+		-- 		str = separators.slant_right,
+		-- 		hl = { fg = palette.yellow.base, bg = palette.red.base },
+		-- 	},
+		-- 	right_sep = {
+		-- 		always_visible = true,
+		-- 		str = separators.slant_right,
+		-- 		hl = { fg = palette.red.base, bg = palette.bg0 },
+		-- 	},
+		-- })
 
 		lsp = {
           provider = function()
@@ -384,9 +505,90 @@ end,
           right_sep = {
 				always_visible = true,
 				str = '',
-				hl ="UserSLErrorStatus",
+				hl ="UserSLStatusBg",
 			},
 		},
+
+		-- table.insert(components.active[left], {
+		-- 	provider = function()
+		-- 		local s
+		-- 		local count = vim.tbl_count(vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR }))
+		-- 		if count > 0 then
+		-- 			s = string.format(' %s %d ', '', count)
+		-- 		else
+		-- 			s = ''
+		-- 		end
+		-- 		return s
+		-- 	end,
+	-- 	hl = { fg = palette.bg0, bg = palette.red.base },
+		-- 	left_sep = {
+		-- 		always_visible = true,
+		-- 		str = separators.slant_right,
+		-- 		hl = { fg = palette.bg0, bg = palette.red.base },
+		-- 	},
+		-- })
+
+		-- table.insert(components.active[left], {
+		-- 	provider = function()
+		-- 		local s
+		-- 		local count = vim.tbl_count(vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN }))
+		-- 		if count > 0 then
+		-- 			s = string.format(' %s %d ', '', count)
+		-- 		else
+		-- 			s = ''
+		-- 		end
+		-- 		return s
+		-- 	end,
+		-- 	hl = { fg = palette.bg0, bg = palette.magenta.base },
+		-- 	left_sep = {
+		-- 		always_visible = true,
+		-- 		str = separators.slant_right,
+		-- 		hl = { fg = palette.red.base, bg = palette.magenta.base },
+		-- 	},
+		-- })
+
+		-- table.insert(components.active[left], {
+		-- 	provider = function()
+		-- 		local s
+		-- 		local count = vim.tbl_count(vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO }))
+		-- 		if count > 0 then
+		-- 			s = string.format(' %s %d ', '', count)
+		-- 		else
+		-- 			s = ''
+		-- 		end
+		-- 		return s
+		-- 	end,
+		-- 	hl = { fg = palette.bg0, bg = palette.blue.base },
+		-- 	left_sep = {
+		-- 		always_visible = true,
+		-- 		str = separators.slant_right,
+		-- 		hl = { fg = palette.magenta.base, bg = palette.blue.base },
+		-- 	},
+		-- })
+
+		-- table.insert(components.active[left], {
+		-- 	provider = function()
+		-- 		local s
+		-- 		local count = vim.tbl_count(vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT }))
+		-- 		if count > 0 then
+		-- 			s = string.format(' %s %d ', '', count)
+		-- 		else
+		-- 			s = ''
+		-- 		end
+		-- 		return s
+		-- 	end,
+		-- 	hl = { fg = palette.bg0, bg = palette.orange.base },
+		-- 	left_sep = {
+		-- 		always_visible = true,
+		-- 		str = separators.slant_right,
+		-- 		hl = { fg = palette.blue.base, bg = palette.orange.base },
+		-- 	},
+		-- 	right_sep = {
+		-- 		always_visible = true,
+		-- 		str = separators.slant_right,
+		-- 		hl = { fg = palette.orange.base, bg = 'none' },
+		-- 	},
+		-- })
 
 		-- right
  vi_mode = {
@@ -396,13 +598,13 @@ end,
     hl = vi_mode_hl,
     left_sep = {
 				always_visible = true,
-				str ='',
-				hl =vi_sep_hl,
+				str ='',
+				hl =vi_sep_hl1,
 			},
     right_sep = {
 				always_visible = true,
-				str ='',
-				hl =vi_sep_hl,
+				str ='',
+				hl =vi_sep_hl1,
 			},
 		},
         lsp_error = {
@@ -445,109 +647,59 @@ end,
 				end
 				return s
 			end,
-			hl = {fg="#393b44",bg="#BEADFA"},
-			right_sep = {
+			hl = { fg = 'none', bg = 'none' },
+			left_sep = {
 				always_visible = true,
-				str ="",
-				hl = {fg="#BEADFA",bg="#F9F7C9"},
+				str = separators.left_filled,
+				hl = function() return { fg = 'none', bg = 'none' } end,
 			},
 		},
 
-		-- search_count = {
-		-- 	provider = function()
-		-- 		if vim.v.hlsearch == 0 then return '' end
-		--
-		-- 		local ok, result = pcall(vim.fn.searchcount, { maxcount = 999, timeout = 250 })
-		-- 		if not ok then return '' end
-		-- 		if next(result) == nil then return '' end
-		--
-		-- 		local denominator = math.min(result.total, result.maxcount)
-		-- 		return string.format(' [%d/%d] ', result.current, denominator)
-		-- 	end,
-		-- 	hl = { fg = 'none', bg = 'none' },
-		-- 	left_sep = {
-		-- 		always_visible = true,
-		-- 		str = separators.left_filled,
-		-- 		hl = function() return { fg = 'none', bg = 'none' } end,
-		-- 	},
-		-- 	right_sep = {
-		-- 		always_visible = true,
-		-- 		str = separators.left_filled,
-		-- 		hl = { fg = 'none', bg = 'none' },
-		-- 	},
-		-- },
-        in_file_type = {
-    provider = function()
-      return fmt(" %s ", vim.bo.filetype:upper())
-    end,
-    hl = "UserSLGitBranch",
-    left_sep = {
+		search_count = {
+			provider = function()
+				if vim.v.hlsearch == 0 then return '' end
+
+				local ok, result = pcall(vim.fn.searchcount, { maxcount = 999, timeout = 250 })
+				if not ok then return '' end
+				if next(result) == nil then return '' end
+
+				local denominator = math.min(result.total, result.maxcount)
+				return string.format(' [%d/%d] ', result.current, denominator)
+			end,
+			hl = { fg = 'none', bg = 'none' },
+			left_sep = {
 				always_visible = true,
-				str ='',
-				hl ="UserSLGitBranch",
+				str = separators.left_filled,
+				hl = function() return { fg = 'none', bg = 'none' } end,
 			},
-    right_sep = {
+			right_sep = {
 				always_visible = true,
-				str ='',
-				hl ="UserSLGitBranch",--nightfox
-				-- hl ={fg="#63cdcf",bg="#BEADFA"},--carbonfox
+				str = separators.left_filled,
+				hl = { fg = 'none', bg = 'none' },
 			},
 		},
         file_type = {
     provider = function()
       return fmt(" %s ", vim.bo.filetype:upper())
     end,
-    hl = "UserSLHint",
-   --  left_sep = {
-			-- 	always_visible = true,
-			-- 	str ='',
-			-- 	hl ="UserSLInfoWarn",
-			-- },
-    right_sep = {
-				always_visible = true,
-				str ='',
-				hl ={fg="#81b29a",bg="#BEADFA"},--nightfox
-				-- hl ={fg="#63cdcf",bg="#BEADFA"},--carbonfox
-			},
-		},
+    hl = "UserSLAlt",
+  },
 
 		cursor_position = {
 			provider = {
 				name = 'position',
 				opts = { padding = false },
 			},
-			hl ={fg="#393b44",bg="#F9F7C9"},
-			-- left_sep = {
-			-- 	always_visible = true,
-			-- 	str = string.format('%s%s', separators.left_filled,separators.block),
-			-- 	hl = function() return { fg = 'none', bg = 'none' } end,
-			-- },
-			-- right_sep = {
-			-- 	always_visible = true,
-			-- 	str = '  ',
-			-- 	hl = { fg = 'none', bg = 'none' },
-			-- },
-		},
-	word_count = {
-	         provider=function()
-    -- -- the third string here is the string for visual-block mode (^V)
-    -- if vim.fn.mode() == "v" or vim.fn.mode() == "V" or vim.fn.mode() == "" then
-    --     return vim.fn.wordcount().visual_words ..""
-    -- else
-    --     return vim.fn.wordcount().words ..""
-    -- end
-    return ""
-end,
-			hl ={fg="#393b44",bg="#F9F7C9"},
-			-- left_sep = {
-			-- 	always_visible = true,
-			-- 	str = string.format('%s%s', separators.left_filled,separators.block),
-			-- 	hl = function() return { fg = 'none', bg = 'none' } end,
-			-- },
+			hl = { fg = 'none', bg = 'none' },
+			left_sep = {
+				always_visible = true,
+				str = string.format('%s%s', separators.left_filled,separators.block),
+				hl = function() return { fg = 'none', bg = 'none' } end,
+			},
 			right_sep = {
 				always_visible = true,
-				str ="",
-				hl = {fg="#F9F7C9",bg="#AF0FF1"},
+				str = '  ',
+				hl = { fg = 'none', bg = 'none' },
 			},
 		},
 
@@ -560,39 +712,34 @@ end,
 		-- },
 
 		-- inactive statusline
-		-- in_file_info = {
-		-- 	provider = function()
-		-- 		if vim.api.nvim_buf_get_name(0) ~= '' then
-		-- 			return file.file_info({}, { colored_icon = true })
-		-- 		else
-		-- 			return file.file_type({}, { colored_icon = true, case = 'lowercase' })
-		-- 		end
-		-- 	end,
-		-- 	hl = { fg = 'none', bg = 'none' },
-		-- 	left_sep = {
-		-- 		always_visible = true,
-		-- 		str = string.format('%s%s', separators.left_filled, separators.block),
-		-- 		hl = { fg = 'none', bg = 'none' },
-  -- 		},
-		-- 	right_sep = {
-		-- 		always_visible = true,
-		-- 		str = ' ',
-		-- 		hl = { fg = 'none', bg = 'none' },
-		-- 	},
-		-- },
-  --         default = { -- needed to pass the parent StatusLine hl group to right hand side
-  --   provider = "",
-  --   hl = "StatusLine",
-  -- },
+		in_file_info = {
+			provider = function()
+				if vim.api.nvim_buf_get_name(0) ~= '' then
+					return file.file_info({}, { colored_icon = true })
+				else
+					return file.file_type({}, { colored_icon = true, case = 'lowercase' })
+				end
+			end,
+			hl = { fg = 'none', bg = 'none' },
+			left_sep = {
+				always_visible = true,
+				str = string.format('%s%s', separators.left_filled, separators.block),
+				hl = { fg = 'none', bg = 'none' },
+  		},
+			right_sep = {
+				always_visible = true,
+				str = ' ',
+				hl = { fg = 'none', bg = 'none' },
+			},
+		},
 	}
 
 	local active = {
 		{ -- left
 			c.vim_status,
+			c.file_name,
 			c.git_branch,
-            -- c.file_e,
             c.vi_mode,
-            -- c.default,
 		},
 		{ -- right
             c.lsp,
@@ -601,50 +748,23 @@ end,
             c.lsp_info,
             c.file_type,
 			c.macro,
-			-- c.cursor_position,
-            c.word_count,
+			c.search_count,
+			c.cursor_position,
+			-- c.scroll_bar,
 		},
 	}
 
 	local inactive = {
-      {
-       c.git_branch,
-       c.default
-      },
-      {
-        c.in_file_type,
-      }
+		{ -- left
+		},
+		{ -- right
+			c.in_file_info,
+		},
 	}
 
 	opts.components = { active = active, inactive = inactive }
 
 	feline.setup(opts)
+     -- feline.use_theme(groups)
 end
 
-return {
-	'freddiehaddad/feline.nvim',
-	dependencies = { 'EdenEast/nightfox.nvim', 'lewis6991/gitsigns.nvim', 'nvim-tree/nvim-web-devicons' },
-    config = config,
-    -- highlight_reset_triggers = {},
-	init = function()
-		-- use a global statusline
-		-- vim.opt.laststatus = 3
-
-		-- update statusbar when there's a plugin update
-		vim.api.nvim_create_autocmd('User', {
-			pattern = 'LazyCheck',
-			callback = function() vim.opt.statusline = vim.opt.statusline end,
-		})
-
-
-		-- hide the mode
-		vim.opt.showmode = false
-
-		-- hide search count on command line
-		vim.opt.shortmess:append({ S = true })
-	end,
-	opts = {
-		force_inactive = { filetypes = { '^dapui_*', '^help$', '^neotest*', '^NvimTree$', '^qf$' } },
-		disable = { filetypes = { '^alpha$' } },
-	},
-}

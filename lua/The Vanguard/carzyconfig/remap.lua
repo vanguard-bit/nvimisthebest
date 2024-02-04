@@ -1,4 +1,10 @@
 local vim = vim
+
+
+vim.keymap.set("n","+","<C-a>")
+vim.keymap.set("n","-","<C-x>")
+
+
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
@@ -14,7 +20,7 @@ vim.keymap.set("n", "<leader>m", "Nzzzv")
     require("vim-with-me").StartVimWithMe()
 end)
 vim.keymap.set("n", "<leader>svwm", function()
-    require("vim-with-me").StopVimWithMe()
+  require("vim-with-me").StopVimWithMe()
 end)--]]
 
 -- greatest remap ever
@@ -28,8 +34,8 @@ vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
 -- This is going to get me cancelled
 vim.keymap.set("i", "<C-z>", "<Esc>")
 --godly telescope remaps
-vim.keymap.set("n", "\"", ":Telescope registers<CR>")
-vim.keymap.set("n", "<leader>rb", ":Telescope buffers<CR>")
+-- vim.keymap.set("n", "\"", ":Telescope registers<CR>")
+-- vim.keymap.set("n", "<leader>rb", ":Telescope buffers<CR>")
 
 vim.keymap.set("n", "Q", "<nop>")
 --vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
@@ -41,10 +47,10 @@ vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-
+vim.keymap.set("v","ccb",":|%s/\\%V./&/g")
 vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/AppData/Local/nvim/lua/The Vanguard/lazy.lua<CR>");
-vim.keymap.set("n", "<leader>km", "<cmd>e ~/AppData/Local/nvim/lua/The Vanguard/carzyconfig/remap.lua<CR>");
---vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
+vim.keymap.set("n", "km", "<cmd>e ~/AppData/Local/nvim/lua/The Vanguard/carzyconfig/remap.lua<CR>");
+vim.keymap.set("n", "<leader>fml", "<cmd>CellularAutomaton make_it_rain<CR>");
 
 --vim.keymap.set("n", "<leader><leader>", function()
 --    vim.cmd("so")
@@ -96,4 +102,49 @@ vim.keymap.set("n", "<leader>ww", "<C-W>p", { desc = "Other window", remap = tru
 --vim.keymap.set("n", "<leader>w|", "<C-W>v", { desc = "Split window right", remap = true })
 --vim.keymap.set("n", "<leader>-", "<C-W>s", { desc = "Split window below", remap = true })
 --vim.keymap.set("n", "<leader>|", "<C-W>v", { desc = "Split window right", remap = true })
-vim.keymap.set("i","<S-Tab>","<cmd>Telescope symbols<CR>")
+vim.keymap.set({"i","v"},"<S-Tab>","<cmd>Telescope symbols<CR>")
+--copy error messages
+vim.keymap.set("n","<leader>ce","<cmd>let @* = execute('messages')<CR>")
+--temp fix
+vim.keymap.set("n","<leader>0","<cmd>colorscheme carbonfox<CR>")
+vim.keymap.set("n","<leader>1","<cmd>colorscheme nightfox<CR>")
+vim.keymap.set("n","<leader>2","<cmd>colorscheme nordfox<CR>")
+vim.keymap.set("n","<leader>3","<cmd>colorscheme nightfly<CR>")
+vim.keymap.set("n","<leader>4","<cmd>colorscheme rose-pine<CR>")
+vim.keymap.set("n","<leader>5","<cmd>colorscheme tokyonight<CR>")
+vim.keymap.set("n","<leader>6","<cmd>colorscheme tokyonight-night<CR>")
+
+
+
+--yanky
+vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
+vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
+vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
+vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
+
+vim.keymap.set("n", "<c-p>", "<Plug>(YankyPreviousEntry)")
+vim.keymap.set("n", "<c-n>", "<Plug>(YankyNextEntry)")
+--debugger keymaps
+vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
+vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
+vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
+vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
+vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
+vim.keymap.set('n', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
+vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
+vim.keymap.set({'n', 'v'}, '<Leader>dh', function()
+  require('dap.ui.widgets').hover()
+end)
+vim.keymap.set({'n', 'v'}, '<Leader>dp', function()
+  require('dap.ui.widgets').preview()
+end)
+vim.keymap.set('n', '<Leader>df', function()
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.frames)
+end)
+vim.keymap.set('n', '<Leader>ds', function()
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.scopes)
+end)
