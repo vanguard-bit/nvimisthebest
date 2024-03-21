@@ -110,3 +110,8 @@ vim.cmd [[ autocmd InsertEnter * set cmdheight=0 ]]
 vim.cmd [[ autocmd InsertLeave * set cmdheight=1 ]]
 -- vim.cmd [[ autocmd CmdlineEnter * set cmdheight=1 ]]
 -- vim.cmd [[ autocmd CmdlineLeave * set cmdheight=0 ]]
+vim.cmd [[ autocmd BufWrite *.c mkview ]]
+vim.cmd [[ autocmd BufWinEnter *.c silent! loadview ]]
+
+vim.cmd [[ autocmd BufWrite *.rs mkview ]]
+vim.cmd [[ autocmd BufWinEnter *.rs silent! loadview ]]
