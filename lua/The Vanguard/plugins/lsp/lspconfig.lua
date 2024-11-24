@@ -155,19 +155,34 @@ require'lspconfig'.lua_ls.setup {
  --   end,
  --       on_attach=on_attach,
  -- }
- require'lspconfig'['pylyzer'].setup({
-   capabilities = capabilities,
-       on_attach=on_attach,
-  settings={
-   python = {
-     checkOnType = false,
-     diagnostics = true,
-     inlayHints = true,
-     smartCompletion = true
-   }
- }
- })
- end,
+ -- require'lspconfig'['pylyzer'].setup({
+ --   capabilities = capabilities,
+ --       on_attach=on_attach,
+ --  settings={
+ --   python = {
+ --     checkOnType = false,
+ --     diagnostics = true,
+ --     inlayHints = true,
+ --     smartCompletion = true
+ --   }
+ -- }
+ -- })
+ require'lspconfig'.pylsp.setup{
+  settings = {
+    pylsp = {
+      plugins = {
+        pycodestyle = {
+          ignore = {'W391'},
+          maxLineLength = 100
+        }
+      }
+    }
+  }
+}
+  -- init.lua
+  -- require'lspconfig'.jdtls.setup{cmd = {"jdtls"}}
+-- require'lspconfig'.java_language_server.setup{cmd = {"lang_server_windows.cmd"}}
+end,
 }
 
 -- require'lspconfig'.rust_analyzer.setup({

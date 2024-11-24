@@ -4,15 +4,16 @@ return{
   dependencies = {
     'chrisgrieser/cmp_yanky',
     --    " For snippy users.
-    'dcampos/nvim-snippy',
-    'dcampos/cmp-snippy',
+    -- 'dcampos/nvim-snippy',
+    -- 'dcampos/cmp-snippy',
     --     For vsnip users.
     --    'hrsh7th/cmp-vsnip'
     --    'hrsh7th/vim-vsnip'
     -- luasnip users.
-    'L3MON4D3/LuaSnip',
+    {'L3MON4D3/LuaSnip', build = 'make install_jsregexp'},
+    'honza/vim-snippets',
     'saadparwaiz1/cmp_luasnip',
-    "rafamadriz/friendly-snippets",
+    -- "rafamadriz/friendly-snippets",
 
     --     ultisnips users.
     --    'SirVer/ultisnips'
@@ -26,6 +27,7 @@ return{
 --local winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:Visual,Search:None"
 -- Set up nvim-cmp.
   config = function()
+  require("luasnip.loaders.from_snipmate").lazy_load()
     local kind_icons = {
       Text = "󰉿",
       Method = "󰆧",
@@ -54,12 +56,14 @@ return{
       TypeParameter = "󰅲",
     }
     -- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
-    require("luasnip.loaders.from_vscode").lazy_load()
+    -- require("luasnip.loaders.from_vscode").lazy_load()
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 local cmp = require'cmp'
+
 cmp.setup({
+
   formatting = {
    format = function(entry, vim_item)
     -- Kind icons
@@ -68,12 +72,13 @@ cmp.setup({
       return vim_item
     end
   },
+
   snippet = {
     -- REQUIRED - you must specify a snippet engine
     expand = function(args)
       --  vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-      --  require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-      require('snippy').expand_snippet(args.body) -- For `snippy` users.
+       require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+      -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
       -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
     end,
   },
@@ -90,8 +95,8 @@ cmp.setup({
 		--	},
           },
   mapping = cmp.mapping.preset.insert({
-    ["<C-k>"] = cmp.mapping.select_prev_item(),
-    ["<C-j>"] = cmp.mapping.select_next_item(),
+    ["<C-p>"] = cmp.mapping.select_prev_item(),
+    ["<C-n>"] = cmp.mapping.select_next_item(),
     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete(),
@@ -100,17 +105,16 @@ cmp.setup({
   }),
 
   sources = cmp.config.sources({
+    { name = 'luasnip', option = { show_autosnippets = true } }, -- For luasnip users.
     { name = 'nvim_lsp' },
     --  { name = 'vsnip' }, -- For vsnip users.
-    --{ name = 'luasnip' }, -- For luasnip users.
     -- { name = 'ultisnips' }, -- For ultisnips users.
-    { name = 'snippy' }, -- For snippy users.
+    -- { name = 'snippy' }, -- For snippy users.
     { name = 'buffer', keyword_length = 3},
     {name="cmdline"},
     {name="path"},
     {name="buffer"},
-    {name = "crates"},
-    { name = "cmp_yanky" },
+    {name = "crates"}
   })
 })
 
@@ -122,161 +126,16 @@ cmp.setup.filetype('gitcommit', {
     { name = 'buffer' },
   })
 })
---
--- require("neodev").setup({
---   -- add any options here, or leave empty to use the default settings
--- })
---     local keymap = vim.keymap -- for conciseness
---
---     local opts = { noremap = true, silent = true }
---     local on_attach = function(client,bufnr)
---       opts.buffer = bufnr
---
---
---       -- set keybinds
---      opts.desc = "Show LSP references"
---      keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
---
---       opts.desc = "Go to declaration"
---       keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
---
---       opts.desc = "Show LSP definitions"
---       keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
---
---       opts.desc = "Show LSP implementations"
---       keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts) -- show lsp implementations
---
---       opts.desc = "Show LSP type definitions"
---       keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
---
---       opts.desc = "See available code actions"
---       keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection
---
---       opts.desc = "Smart rename"
---       keymap.set("n", "<leader>re", vim.lsp.buf.rename, opts) -- smart rename
---       opts.desc = "Show buffer diagnostics"
---       keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
---
---       opts.desc = "Show line diagnostics"
---       keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts) -- show diagnostics for line
---
---       opts.desc = "Go to previous diagnostic"
---       keymap.set("n", "[d", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
---
---       opts.desc = "Go to next diagnostic"
---       keymap.set("n", "]d", vim.diagnostic.goto_next, opts) -- jump to next diagnostic in buffer
---
---       opts.desc = "Show documentation for what is under cursor"
---       keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
---
---       opts.desc = "Restart LSP"
---       keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
---     end
---
---
--- local capabilities = require('cmp_nvim_lsp').default_capabilities()
--- -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
--- require('lspconfig')['clangd'].setup {
---   capabilities = capabilities,
---       on_attach=on_attach,
--- }
--- require('lspconfig')['rust_analyzer'].setup({
---   capabilities = capabilities,
---       on_attach=on_attach,
---       single_file_support = true,
---     settings = {
---         ["rust-analyzer"] = {
---             imports = {
---                 granularity = {
---                     group = "module",
---                 },
---                 prefix = "self",
---             },
---
---  cargo = {
---             allFeatures = true,
---             loadOutDirsFromCheck = true,
---             runBuildScripts = true,
---           },
---           -- Add clippy lints for Rust.
---           checkOnSave = {
---             allFeatures = true,
---             command = "clippy",
---             extraArgs = { "--no-deps" },
---           },
---             procMacro = {
---                 enable = true
---             },
---         }
---     },
---     taplo = {
---       keys = {
---         {
---           "K",
---           function()
---             if vim.fn.expand("%:t") == "Cargo.toml" and require("crates").popup_available() then
---               require("crates").show_popup()
---             else
---               vim.lsp.buf.hover()
---             end
---           end,
---           desc = "Show Crate Documentation",
---         },
---       },
---     },
--- })
--- require('lspconfig')['lua_ls'].setup({
---   capabilities = capabilities,
---       on_attach=on_attach,
---   on_init = function(client)
---     local path = client.workspace_folders[1].name
---     if not vim.loop.fs_stat(path..'/.luarc.json') and not vim.loop.fs_stat(path..'/.luarc.jsonc') then
---       client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
---         Lua = {
---           runtime = {
---             -- Tell the language server which version of Lua you're using
---             -- (most likely LuaJIT in the case of Neovim)
---             version = 'LuaJIT'
---           },
---           -- Make the server aware of Neovim runtime files
---           workspace = {
---             checkThirdParty = false,
---             library = {
---               vim.env.VIMRUNTIME
---               -- "${3rd}/luv/library"
---             -- "${3rd}/busted/library",
---             }
---             -- or pull in all of 'runtimepath'. NOTE: this is a lot slower
---             -- library = vim.api.nvim_get_runtime_file("", true)
---           }
---         }
---       })
---       client.notify("workspace/didChangeConfiguration", { settings = client.config.settings})
---       end
---     return true
---   end
--- })
--- require'lspconfig'['typos_lsp'].setup{
---   capabilities = capabilities,
---     root_dir = function(fname)
---     return require('lspconfig.util').root_pattern('typos.toml', '_typos.toml', '.typos.toml')(fname)
---       or vim.fn.getcwd()
---   end,
---       on_attach=on_attach,
---
--- }
--- require'lspconfig'['pylyzer'].setup({
---   capabilities = capabilities,
---       on_attach=on_attach,
---  settings={
---   python = {
---     checkOnType = false,
---     diagnostics = true,
---     inlayHints = true,
---     smartCompletion = true
---   }
--- }
--- })
+local ls = require("luasnip")
 
+vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
+vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = true})
+vim.keymap.set({"i", "s"}, "<C-J>", function() ls.jump(-1) end, {silent = true})
+
+vim.keymap.set({"i", "s"}, "<C-E>", function()
+  if ls.choice_active() then
+    ls.change_choice(1)
+  end
+end, {silent = true})
 end
 }

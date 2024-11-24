@@ -37,7 +37,7 @@ vim.keymap.set("i", "<C-z>", "<Esc>")
 -- vim.keymap.set("n", "\"", ":Telescope registers<CR>")
 -- vim.keymap.set("n", "<leader>rb", ":Telescope buffers<CR>")
 
-vim.keymap.set("n", "Q", "<nop>")
+-- vim.keymap.set("n", "Q", "<nop>")
 --vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 --vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
@@ -55,15 +55,25 @@ vim.keymap.set("n", "<leader>fml", "<cmd>CellularAutomaton make_it_rain<CR>");
 --vim.keymap.set("n", "<leader><leader>", function()
 --    vim.cmd("so")
 --end)
---for compiling
-vim.keymap.set('n', 'py', ':w <bar> !python "%"<CR>', { silent = true })
-vim.keymap.set('n', 'cpp', ':w <bar> !c++ "%" -o "%:r".exe', { silent = true })
-vim.keymap.set('n', 'sh', ':w <bar> !chmod +x "%" && source "%"<CR>', { silent = true })
-vim.keymap.set('n', 'c!', ':w <bar> !gcc "%" -o "C:/Users/Prajwal/OneDrive/Desktop/new/Newfolder/nvimoutput/a.exe"<CR>', { silent = true })
-vim.keymap.set('n', 'jv', ':w <bar> !javac "%" && java "%:r"<CR>', { silent =true })
+--cmake nightmare
+vim.keymap.set('n','cm',':w<CR><C-w>v<C-w>12><C-w>l:term<CR>|irm -rf build<CR>cmake -H. -Bbuild<CR>')
+vim.keymap.set('t','<C-x>','cmake --build build<CR>')
+vim.keymap.set('t','<C-k>','cd build\\debug<CR>a.exe<CR>')
+vim.keymap.set('t','1`','<C-\\><C-n>:bd! %<CR>')
+vim.keymap.set('n','1`',':bd! %<CR>')
 
-    vim.keymap.set("n","zz",":norm! Vyp<CR>_wwwRj<C-[>wwwwRj<C-[>wwwwRj<C-[>$a<CR>}<CR>}<C-[>Vkkk=jo")
-    -- for(int i=0;i<3;i++){
+--for compiling
+vim.keymap.set('n', 'pyy', ':w <CR><C-w>v<C-w>l:term<CR><C-w>h:redir @a<CR>:!echo %<CR>:redir END<CR>:tabnew<CR>"apjjwwve"zy:bd!<CR><C-w>l12<C-w><ipython .py<Left><Left><Left><C-\\><C-n>"zpi<CR>', { silent = true })
+vim.keymap.set('n', 'py', ':w <CR>:redir @a<CR>:!echo %<CR>:redir END<CR>:tabnew<CR>"apjjwwve"zy:bd!<CR><C-w>lipython .py<Left><Left><Left><C-\\><C-n>"zpi<CR>', { silent = true })
+vim.keymap.set('n', 'pz', ':redir @a<CR>:!echo %<CR>:redir END<CR>:tabnew<CR>"apjjwwve"zy:bd!<CR>')
+vim.keymap.set('n', 'cpp', ':w <bar> !c++ "%" -o "C:/Users/Prajwal/OneDrive/Desktop/new/Newfolder/nvimoutput/a.exe"<CR><CR><C-w>li<ESC>a.exe<CR>', { silent = true })
+vim.keymap.set('n', 'sh', ':w <bar> !chmod +x "%" && source "%"<CR>', { silent = true })
+vim.keymap.set('n', 'c!', ':w <bar> !gcc "%" -o "C:/Users/Prajwal/OneDrive/Desktop/new/Newfolder/nvimoutput/a.exe" -lncursesw -DNCURSES_STATIC <CR>')
+vim.keymap.set("n","!^","<C-w>lia.exe<CR>")
+vim.keymap.set('n', 'jv', ':w <bar> !javac -d "C:/Users/Prajwal/OneDrive/Desktop/new/Newfolder/nvimoutput/" "%"<CR> <C-w>lijava ', { silent =true })
+
+vim.keymap.set("n","zz",":norm! Vyp<CR>_wwwRj<C-[>wwwwRj<C-[>wwwwRj<C-[>$a<CR>}<CR>}<C-[>Vkkk=jo")
+-- for(int i=0;i<3;i++){
 
 vim.api.nvim_set_keymap("n", "<leader>ta", ":$tabnew<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<leader>tc", ":tabclose<CR>", { noremap = true })
@@ -87,10 +97,10 @@ vim.keymap.set("n","<leader>u",":UndotreeToggle<CR>")
 --lazyvim keymaps
 vim.keymap.set("n","<leader>l",":Lazy<CR>")
 vim.keymap.set("n","<leader>fn",":enew<CR>")
---vim.keymap.set("n","<leader>te","<C-w>s:term<CR>13<C-w>-")
+-- vim.keymap.set("n","<leader>te","<C-w>s:term<CR>13<C-w>-")
 vim.keymap.set("n","<leader>t<leader>",":term<CR>")
 vim.keymap.set("n","te",'<C-w>v10<C-w>><C-w>l:term<CR>icd "C:\\Users\\Prajwal\\OneDrive\\Desktop\\new\\Newfolder\\nvimoutput"<CR><C-\\><C-n><C-w>h')
-vim.keymap.set('n', 'cf', ':w <bar> !gcc "%" -o "C:/Users/Prajwal/OneDrive/Desktop/new/Newfolder/nvimoutput/a.exe"<CR><CR><C-w>l|ia.exe<CR>', { silent = true })
+vim.keymap.set('n', 'cf', ':w <bar> !gcc "%" -o "C:/Users/Prajwal/OneDrive/Desktop/new/Newfolder/nvimoutput/a.exe"<CR><CR><C-w>li<ESC>a.exe<CR>', { silent = true })
 vim.keymap.set("t","C!","<C-\\><C-n>:bd! %<CR>")
 vim.keymap.set("n","ru",'<C-w>s10<C-w>+<C-w>j:term<CR>icd "C:\\Users\\Prajwal\\OneDrive\\Desktop\\new\\Newfolder\\hello_world"<CR>cargo run<CR><C-\\><C-n>:tab split<CR>:tabp<CR>i')
 vim.keymap.set("t","bn","<C-\\><C-n>:tabn<CR>i")
@@ -101,6 +111,7 @@ vim.keymap.set("t", "<C-up>", "<cmd>wincmd k<cr>", { desc = "Go to upper window"
 vim.keymap.set("t", "<C-left>", "<cmd>wincmd h<cr>", { desc = "Go to left window" })
 vim.keymap.set("t", "<C-down>", "<cmd>wincmd j<cr>", { desc = "Go to lower window" })
 vim.keymap.set("t", "<C-right>", "<cmd>wincmd l<cr>", { desc = "Go to right window" })
+vim.keymap.set("n","||",":tab split<CR>")
 --vim.keymap.set("t", "<C-/>", "<cmd>close<cr>", { desc = "Hide Terminal" })
 --vim.keymap.set("t", "<c-_>", "<cmd>close<cr>", { desc = "which_key_ignore" })
 -- windows
@@ -121,6 +132,7 @@ vim.keymap.set("n","<leader>3","<cmd>colorscheme nightfly<CR>")
 vim.keymap.set("n","<leader>4","<cmd>colorscheme rose-pine<CR>")
 vim.keymap.set("n","<leader>5","<cmd>colorscheme tokyonight<CR>")
 vim.keymap.set("n","<leader>6","<cmd>colorscheme tokyonight-night<CR>")
+vim.keymap.set("n","<leader>7","<cmd>colorscheme blue-moon<CR>")
 
 
 
@@ -156,3 +168,7 @@ vim.keymap.set("n", "<c-n>", "<Plug>(YankyNextEntry)")
 --   local widgets = require('dap.ui.widgets')
 --   widgets.centered_float(widgets.scopes)
 -- end)
+--
+--
+vim.keymap.set("n", "gxc", ":call Open_link()<CR>")
+vim.keymap.set("n", "gxx", 'yiW:!"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" <C-R>"<CR>')

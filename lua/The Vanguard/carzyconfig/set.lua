@@ -1,6 +1,6 @@
 local vim = vim
-vim.opt.nu = true
-vim.opt.relativenumber = true
+vim.g.nu = true
+vim.g.relativenumber = true
 vim.o.guicursor = ""
 vim.o.termguicolors = true
 vim.o.showtabline = 2
@@ -30,8 +30,11 @@ vim.opt.signcolumn = "auto"
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
+vim.g.wrap=false
 
---vim.opt.colorcolumn = "80"
+vim.cmd [[autocmd Filetype * set nowrap]] --vim.opt.colorcolumn = "80"
+vim.cmd [[ autocmd BufWinEnter *.rs silent! loadview ]]
+
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 --transparent background
@@ -115,3 +118,18 @@ vim.cmd [[ autocmd BufWinEnter *.c silent! loadview ]]
 
 vim.cmd [[ autocmd BufWrite *.rs mkview ]]
 vim.cmd [[ autocmd BufWinEnter *.rs silent! loadview ]]
+-- vim.cmd [[ autocmd TabNewEntered <leader>0 ]]
+vim.api.nvim_create_augroup("copyname",{clear = true})
+vim.api.nvim_create_autocmd({'TextYankPost'},{
+  group = "copyname",
+  pattern = "*",
+  callback = function() vim.highlight.on_yank{timeout = 400} end
+})
+
+-- vim.api.nvim_create_autocmd("VimEnter",{
+--   callback = function ()
+--     vim.cmd('source "C:/Users/Prajwal/AppData/Local/nvim/lua/The Vanguard/plugins/colorscheme.lua"<CR>')
+--   end
+-- })
+--nope
+vim.g.codeium_enabled = false

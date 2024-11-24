@@ -1,6 +1,8 @@
 require("The Vanguard.carzyconfig.remap")
 require("The Vanguard.lazy")
 require("The Vanguard.carzyconfig")
+-- require("luasnip.loaders.from_vscode").lazy_load()
+-- require("luasnip.loaders.from_snipmate").lazy_load()
 --require("The Vanguard.feline")
 --require("The Vanguard.tabby")
 -- require("The Vanguard.carzyconfig.lspconfig")
