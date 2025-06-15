@@ -1,10 +1,10 @@
-require 'nvim-treesitter.install'.compilers = { "clang" }
+require 'nvim-treesitter.install'.compilers = { "gcc" }
 require'nvim-treesitter'.setup{
   autotag = {enable = true}
 }
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all" (the five listed parsers should always be installed)
-  ensure_installed = { "c", "lua", "vim", "vimdoc", "query","ron","rust","toml" },
+  ensure_installed = { "cpp", "c", "lua", "vim", "vimdoc", "query","ron","rust","toml" },
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,

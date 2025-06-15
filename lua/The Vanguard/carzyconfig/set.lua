@@ -132,4 +132,4 @@ vim.api.nvim_create_autocmd({'TextYankPost'},{
 --   end
 -- })
 --nope
-vim.g.codeium_enabled = false
+vim.g.codeium_enabled = true

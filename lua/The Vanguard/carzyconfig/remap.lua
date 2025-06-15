@@ -58,9 +58,13 @@ vim.keymap.set("n", "<leader>fml", "<cmd>CellularAutomaton make_it_rain<CR>");
 --cmake nightmare
 vim.keymap.set('n','cm',':w<CR><C-w>v<C-w>12><C-w>l:term<CR>|irm -rf build<CR>cmake -H. -Bbuild<CR>')
 vim.keymap.set('t','<C-x>','cmake --build build<CR>')
-vim.keymap.set('t','<C-k>','cd build\\debug<CR>a.exe<CR>')
+vim.keymap.set('t','<C-k>','build\\debug\\a.exe<CR>')
 vim.keymap.set('t','1`','<C-\\><C-n>:bd! %<CR>')
 vim.keymap.set('n','1`',':bd! %<CR>')
+
+vim.keymap.set('n','<C-Right>','<C-w>l')
+vim.keymap.set('n','<C-Left>','<C-w>h')
+
 
 --for compiling
 vim.keymap.set('n', 'pyy', ':w <CR><C-w>v<C-w>l:term<CR><C-w>h:redir @a<CR>:!echo %<CR>:redir END<CR>:tabnew<CR>"apjjwwve"zy:bd!<CR><C-w>l12<C-w><ipython .py<Left><Left><Left><C-\\><C-n>"zpi<CR>', { silent = true })

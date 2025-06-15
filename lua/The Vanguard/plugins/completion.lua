@@ -10,7 +10,6 @@ return{
     --    'hrsh7th/cmp-vsnip'
     --    'hrsh7th/vim-vsnip'
     -- luasnip users.
-    {'L3MON4D3/LuaSnip', build = 'make install_jsregexp'},
     'honza/vim-snippets',
     'saadparwaiz1/cmp_luasnip',
     -- "rafamadriz/friendly-snippets",
@@ -107,13 +106,14 @@ cmp.setup({
   sources = cmp.config.sources({
     { name = 'luasnip', option = { show_autosnippets = true } }, -- For luasnip users.
     { name = 'nvim_lsp' },
+    {name = "cmp_yanky"},
     --  { name = 'vsnip' }, -- For vsnip users.
     -- { name = 'ultisnips' }, -- For ultisnips users.
     -- { name = 'snippy' }, -- For snippy users.
+    {name = "codeium"},
     { name = 'buffer', keyword_length = 3},
-    {name="cmdline"},
+    -- {name="cmdline"},
     {name="path"},
-    {name="buffer"},
     {name = "crates"}
   })
 })
